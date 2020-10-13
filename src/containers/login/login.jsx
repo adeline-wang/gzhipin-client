@@ -10,10 +10,13 @@ import {
     WhiteSpace,
     Button
 } from 'antd-mobile'
+import {connect} from 'react-redux'
+import {Redirect} from 'react-router-dom'
 
+import {login} from '../../redux/actions'
 import Logo from '../../components/logo/logo'
 
-export default class Login extends Component {
+ class Login extends Component {
     state={
         username:'',//用户名
         password:'',//密码
@@ -28,15 +31,21 @@ export default class Login extends Component {
         this.props.history.replace('/register')
     }
     login=()=>{//登陆
-        console.log(JSON.stringify(this.state))
+        // console.log(JSON.stringify(this.state))
+        this.props.login(this.state)
     }
 
     render() {
+        const {redirectTo,msg}=this.props
+        if(redirectTo){
+            return <Redirect to={redirectTo} />
+        }
         return (
             <div>
                 <NavBar>硅&nbsp;谷&nbsp;直&nbsp;聘&nbsp;</NavBar>
                 <Logo />
                 <WingBlank>
+                    {msg?<div className='error-msg'>{msg}</div>:null}
                     <List>
                         <InputItem placeholder='输入用户名' onChange={val=>this.handleChange('username',val)}>用户名:</InputItem>
                         <WhiteSpace />
@@ -52,3 +61,8 @@ export default class Login extends Component {
         )
     }
 }
+
+export default connect(
+    state=>state.user,
+    {login}
+)(Login)
